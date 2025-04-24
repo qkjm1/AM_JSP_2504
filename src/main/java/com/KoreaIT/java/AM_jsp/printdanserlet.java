@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/printdan")
+@WebServlet("/print/dan")
 public class printdanserlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
