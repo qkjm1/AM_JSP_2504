@@ -1,36 +1,34 @@
+<%@page import="java.util.List"%>
+<%@page import="java.util.Map"%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>글쓰기</title>
+
 </head>
 <body>
-<form action="">
-<article>
-	<div>
+	<h2>글쓰기</h2>
+
+	<a href="../home/main">메인으로 이동</a>
+
+	<form action="doWrite" method="POST">
 		<div>
-			<div></div>
-			<input type="text" />
+			제목 : <input type="text" placeholder="제목 입력" name="title"/>
 		</div>
-	</div>
-	<div>
 		<div>
-			<div></div>
-			<div></div>
+			내용 :
+			<textarea type="text" placeholder="내용 입력" name="body"></textarea>
 		</div>
-	</div>
-	<div>
-		<div>
-			<div></div>
-			<div></div>
-		</div>
-	</div>
-</article>
+		<button type="submit">작성</button>
+	</form>
 
 
-</form>
+
 
 
 </body>

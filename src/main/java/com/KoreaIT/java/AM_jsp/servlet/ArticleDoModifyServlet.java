@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.KoreaIT.java.AM_jsp.util.DBUtil;
+import com.KoreaIT.java.AM_jsp.util.SecSql;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,9 +16,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@WebServlet("/article/doModify")
+public class ArticleDoModifyServlet extends HttpServlet {
 
-@WebServlet("/article/detail")
-public class articleDetaliServlet2 extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
@@ -31,8 +32,7 @@ public class articleDetaliServlet2 extends HttpServlet {
 
 		}
 
-
-		String url = "jdbc:mysql://127.0.0.1:3306/AM_DB_25_03?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul";
+		String url = "jdbc:mysql://127.0.0.1:3306/AM_JSP_25_04?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul";
 		String user = "root";
 		String password = "";
 
@@ -40,21 +40,22 @@ public class articleDetaliServlet2 extends HttpServlet {
 
 		try {
 			conn = DriverManager.getConnection(url, user, password);
-			response.getWriter().append("연결 성공!");
-			DBUtil dbUtil = new DBUtil(request, response);
-			int id = Integer.parseInt(request.getParameter("id"));
-			 
- 			String sql = String.format("SELECT * FROM article WHERE id = %d;", id);
 
-			Map<String, Object> articleRow = dbUtil.selectRow(conn, sql);
-			
-					
-			request.setAttribute("articleRow", articleRow);
-			
-			
-//			response.getWriter().append(articleRows.toString());
-			
-			request.getRequestDispatcher("/jsp/article/detail.jsp").forward(request, response);
+			int id = Integer.parseInt(request.getParameter("id"));
+
+			String title = request.getParameter("title");
+			String body = request.getParameter("body");
+
+			SecSql sql = SecSql.from("UPDATE article");
+			sql.append("SET");
+			sql.append("title = ?,", title);
+			sql.append("`body` = ?", body);
+			sql.append("WHERE id = ?;", id);
+
+			DBUtil.update(conn, sql);
+
+			response.getWriter().append(
+					String.format("<script>alert('%d번 글이 수정됨'); location.replace('detail?id=%d');</script>", id, id));
 
 		} catch (SQLException e) {
 			System.out.println("에러 1 : " + e);
@@ -68,7 +69,11 @@ public class articleDetaliServlet2 extends HttpServlet {
 			}
 		}
 
-		
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
 	}
 
 }

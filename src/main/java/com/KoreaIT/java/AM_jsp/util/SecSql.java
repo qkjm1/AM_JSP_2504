@@ -1,6 +1,5 @@
 package com.KoreaIT.java.AM_jsp.util;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
