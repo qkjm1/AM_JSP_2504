@@ -1,4 +1,4 @@
-package com.KoreaIT.java.AM_jsp.servlet;
+package dao;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/member/doSign")
-public class memberDoSignServlet extends HttpServlet {
+public class MemberDoSignServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -47,25 +47,27 @@ public class memberDoSignServlet extends HttpServlet {
 
 			SecSql sql = SecSql.from("SELECT *");
 			sql.append("FROM `member`");
-			sql.append("WHERE loginId = ?';", loginId);
+			sql.append("WHERE loginId = ?;", loginId);
 
 			
 			Map<String, Object> memberRow = DBUtil.selectRow(conn, sql);
 			
 			if(memberRow.isEmpty()) {
 				response.getWriter().append(String.format("<script>alert('%s는 없는 아이디); location.replace('../member/sign');</script>",loginId));
+				return;
 			}
 			
 			if(memberRow.get("loginPw").equals(loginPw) == false) {
 				response.getWriter().append(String.format("<script>alert('비밀번호가 일치하지않음'); location.replace('../member/sign');</script>", loginId));
+				return;
 			}
 
 			HttpSession session = request.getSession();
 			session.setAttribute("signedmember", memberRow);
 			session.setAttribute("signedmemberId", memberRow.get("id"));
-			session.setAttribute("signedmemberLoginId", memberRow.get("loginid"));
+			session.setAttribute("signedmemberLoginId", memberRow.get("loginId"));
 			
-			response.getWriter().append(String.format("<script>alert('로그인됨'); location.replace('../home/main');</script>", memberRow.get("name")));
+			response.getWriter().append(String.format("<script>alert('%s님 로그인됨'); location.replace('../home/main');</script>", memberRow.get("name")));
 			
 			
 		} catch (SQLException e) {

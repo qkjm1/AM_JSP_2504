@@ -1,4 +1,4 @@
-package com.KoreaIT.java.AM_jsp.servlet;
+package service;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -16,8 +16,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/member/doJoin")
-public class MemberDoJoinServlet extends HttpServlet {
+@WebServlet("/article/list")
+public class ArticleListServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -41,31 +41,34 @@ public class MemberDoJoinServlet extends HttpServlet {
 		try {
 			conn = DriverManager.getConnection(url, user, password);
 
-			String loginId = request.getParameter("loginId");
-			String loginPw = request.getParameter("loginPw");
-			String name = request.getParameter("name");
+			int page = 1;
 
-			SecSql sql = SecSql.from("SELECT COUNT(*) AS cnt FROM `member`");
-			sql.append("WHERE loginId = ?;", loginId);
-
-			boolean isJoinableLoginId = DBUtil.selectRowIntValue(conn, sql) == 0;
-
-			if (isJoinableLoginId == false) {
-				response.getWriter().append(String
-						.format("<script>alert('%s는 이미 사용중'); location.replace('../member/join');</script>", loginId));
-				return;
+			if (request.getParameter("page") != null && request.getParameter("page").length() != 0) {
+				page = Integer.parseInt(request.getParameter("page"));
 			}
 
-			sql = SecSql.from("INSERT INTO `member`");
-			sql.append("SET regDate = NOW(),");
-			sql.append("loginId = ?,", loginId);
-			sql.append("loginPw = ?,", loginPw);
-			sql.append("`name` = ?;", name);
+			int itemsInAPage = 10;
+			int limitFrom = (page - 1) * itemsInAPage;
 
-			int id = DBUtil.insert(conn, sql);
+			SecSql sql = SecSql.from("SELECT COUNT(*)");
+			sql.append("FROM article;");
 
-			response.getWriter().append(
-					String.format("<script>alert('%d번 회원이 가입됨'); location.replace('../article/list');</script>", id));
+			int totalCnt = DBUtil.selectRowIntValue(conn, sql);
+			int totalPage = (int) Math.ceil(totalCnt / (double)itemsInAPage);
+
+			sql = SecSql.from("SELECT *");
+			sql.append("FROM article");
+			sql.append("ORDER BY id DESC");
+			sql.append("LIMIT ?, ?;", limitFrom, itemsInAPage);
+
+			List<Map<String, Object>> articleRows = DBUtil.selectRows(conn, sql);
+			
+			request.setAttribute("page", page);
+			request.setAttribute("articleRows", articleRows);
+			request.setAttribute("totalCnt", totalCnt);
+			request.setAttribute("totalPage", totalPage);
+
+			request.getRequestDispatcher("/jsp/article/list.jsp").forward(request, response);
 
 		} catch (SQLException e) {
 			System.out.println("에러 1 : " + e);
@@ -79,11 +82,6 @@ public class MemberDoJoinServlet extends HttpServlet {
 			}
 		}
 
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		doGet(request, response);
 	}
 
 }

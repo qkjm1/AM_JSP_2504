@@ -8,50 +8,35 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원가입</title>
+<title>로그인</title>
 
 </head>
 <body>
-	<h2>회원가입</h2>
+	<h2>로그인</h2>
 
 	<a href="../home/main">메인으로 이동</a>
 
 	<script type="text/javascript">
-	function JoinForm__submit(form) {
-	let loginId = form.loginId.value.trim();
-	let loginPw = form.loginPw.value.trim();
+		function JoinForm__submit(form) {
+			
+			let loginId = form.loginId.value.trim();
+			let loginPw = form.loginPw.value.trim();
 
-	if (loginId.length == 0) {
-		alert('아이디 써');
-		form.loginId.focus();
-		return;
-	}
-	if (loginPw.length == 0) {
-		alert('비번 써');
-		form.loginPw.focus();
-		return;
-	}
+			if (loginId.length == 0) {
+				alert('아이디 써');
+				form.loginId.focus();
+				return;
+			}
+			if (loginPw.length == 0) {
+				alert('비번 써');
+				form.loginPw.focus();
+				return;
+			}
 
-	if (loginPwConfirm.length == 0) {
-		alert('비번 확인 써');
-		form.loginPwConfirm.focus();
-		return;
-	}
 
-	if (loginPw != loginPwConfirm) {
-		alert('비번 일치 x');
-		return;
-	}
+			form.submit();
 
-	if (form.name.value.trim().length == 0) {
-		alert('이름 써');
-		form.name.focus();
-		return;
-	}
-
-	form.submit();
-
-}
+		}
 	</script>
 
 

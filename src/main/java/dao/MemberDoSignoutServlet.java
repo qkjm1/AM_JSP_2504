@@ -1,4 +1,4 @@
-package com.KoreaIT.java.AM_jsp.servlet;
+package dao;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -15,9 +15,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/article/dosign")
-public class ArticleDoWriteServlet extends HttpServlet {
+@WebServlet("/member/doSignout")
+public class MemberDoSignoutServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -41,19 +42,14 @@ public class ArticleDoWriteServlet extends HttpServlet {
 		try {
 			conn = DriverManager.getConnection(url, user, password);
 
-			String title = request.getParameter("title");
-			String body = request.getParameter("body");
-
-			SecSql sql = SecSql.from("INSERT INTO article");
-			sql.append("SET regDate = NOW(),");
-			sql.append("title = ?,", title);
-			sql.append("`body` = ?;", body);
-
-			int id = DBUtil.insert(conn, sql);
-
-			response.getWriter()
-					.append(String.format("<script>alert('%d번 글이 작성됨'); location.replace('list');</script>", id));
-
+			HttpSession session = request.getSession();
+			session.getAttribute("signedmember");
+			session.getAttribute("signedmemberId");
+			session.getAttribute("signedmemberLoginId");
+			
+			response.getWriter().append(String.format("<script>alert('로그아웃되었습니다.'); locattion.replace('../home/main');</script>"));
+			
+			
 		} catch (SQLException e) {
 			System.out.println("에러 1 : " + e);
 		} finally {
@@ -67,8 +63,9 @@ public class ArticleDoWriteServlet extends HttpServlet {
 		}
 
 	}
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		doGet(request, response);
 	}
 
