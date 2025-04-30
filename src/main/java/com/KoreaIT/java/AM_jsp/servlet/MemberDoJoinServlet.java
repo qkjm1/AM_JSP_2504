@@ -1,4 +1,4 @@
-package dao;
+package com.KoreaIT.java.AM_jsp.servlet;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import com.KoreaIT.java.AM_jsp.util.DBUtil;
-import com.KoreaIT.java.AM_jsp.util.SecSql;
+import util.DBUtil;
+import util.SecSql;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,8 +16,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/article/doModify")
-public class ArticleDoModifyServlet extends HttpServlet {
+@WebServlet("/member/doJoin")
+public class MemberDoJoinServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -41,21 +41,31 @@ public class ArticleDoModifyServlet extends HttpServlet {
 		try {
 			conn = DriverManager.getConnection(url, user, password);
 
-			int id = Integer.parseInt(request.getParameter("id"));
+			String loginId = request.getParameter("loginId");
+			String loginPw = request.getParameter("loginPw");
+			String name = request.getParameter("name");
 
-			String title = request.getParameter("title");
-			String body = request.getParameter("body");
+			SecSql sql = SecSql.from("SELECT COUNT(*) AS cnt FROM `member`");
+			sql.append("WHERE loginId = ?;", loginId);
 
-			SecSql sql = SecSql.from("UPDATE article");
-			sql.append("SET");
-			sql.append("title = ?,", title);
-			sql.append("`body` = ?", body);
-			sql.append("WHERE id = ?;", id);
+			boolean isJoinableLoginId = DBUtil.selectRowIntValue(conn, sql) == 0;
 
-			DBUtil.update(conn, sql);
+			if (isJoinableLoginId == false) {
+				response.getWriter().append(String
+						.format("<script>alert('%s는 이미 사용중'); location.replace('../member/join');</script>", loginId));
+				return;
+			}
+
+			sql = SecSql.from("INSERT INTO `member`");
+			sql.append("SET regDate = NOW(),");
+			sql.append("loginId = ?,", loginId);
+			sql.append("loginPw = ?,", loginPw);
+			sql.append("`name` = ?;", name);
+
+			int id = DBUtil.insert(conn, sql);
 
 			response.getWriter().append(
-					String.format("<script>alert('%d번 글이 수정됨'); location.replace('detail?id=%d');</script>", id, id));
+					String.format("<script>alert('%d번 회원이 가입됨'); location.replace('../article/list');</script>", id));
 
 		} catch (SQLException e) {
 			System.out.println("에러 1 : " + e);

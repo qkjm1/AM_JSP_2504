@@ -17,10 +17,11 @@
 	<a href="../home/main">메인으로 이동</a>
 
 	<script type="text/javascript">
-		function JoinForm__submit(form) {
-			
+		function LoginForm__submit(form) {
+		
 			let loginId = form.loginId.value.trim();
 			let loginPw = form.loginPw.value.trim();
+
 
 			if (loginId.length == 0) {
 				alert('아이디 써');
@@ -33,14 +34,13 @@
 				return;
 			}
 
-
 			form.submit();
 
 		}
 	</script>
 
 
-	<form onsubmit="signForm__submit(this); return false;" action="doSign"
+	<form onsubmit="LoginForm__submit(this); return false;" action="doLogin"
 		method="POST">
 		<div>
 			아이디 : <input autocomplete="off" type="text" placeholder="아이디 입력"
@@ -53,6 +53,10 @@
 
 		<button type="submit">로그인</button>
 	</form>
+
+
+
+
 
 </body>
 </html>

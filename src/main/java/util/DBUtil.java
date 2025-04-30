@@ -1,4 +1,4 @@
-package com.KoreaIT.java.AM_jsp.util;
+package util;
 
 import java.sql.*;
 import java.util.ArrayList;

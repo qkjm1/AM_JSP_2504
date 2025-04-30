@@ -1,4 +1,4 @@
-package dao;
+package com.KoreaIT.java.AM_jsp.servlet;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -7,18 +7,17 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import com.KoreaIT.java.AM_jsp.util.DBUtil;
-import com.KoreaIT.java.AM_jsp.util.SecSql;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import util.DBUtil;
+import util.SecSql;
 
-@WebServlet("/member/doSign")
-public class MemberDoSignServlet extends HttpServlet {
+@WebServlet("/member/doLogin")
+public class MemberDoLoginServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -49,27 +48,30 @@ public class MemberDoSignServlet extends HttpServlet {
 			sql.append("FROM `member`");
 			sql.append("WHERE loginId = ?;", loginId);
 
-			
 			Map<String, Object> memberRow = DBUtil.selectRow(conn, sql);
-			
-			if(memberRow.isEmpty()) {
-				response.getWriter().append(String.format("<script>alert('%s는 없는 아이디); location.replace('../member/sign');</script>",loginId));
-				return;
-			}
-			
-			if(memberRow.get("loginPw").equals(loginPw) == false) {
-				response.getWriter().append(String.format("<script>alert('비밀번호가 일치하지않음'); location.replace('../member/sign');</script>", loginId));
+
+			System.out.println(memberRow);
+
+			if (memberRow.isEmpty()) {
+				response.getWriter().append(String.format(
+						"<script>alert('%s는 없는 아이디야'); location.replace('../member/login');</script>", loginId));
 				return;
 			}
 
+			if (memberRow.get("loginPw").equals(loginPw) == false) {
+				response.getWriter().append(String
+						.format("<script>alert('비밀번호 불일치'); location.replace('../member/login');</script>", loginId));
+				return;
+			}
+			
 			HttpSession session = request.getSession();
-			session.setAttribute("signedmember", memberRow);
-			session.setAttribute("signedmemberId", memberRow.get("id"));
-			session.setAttribute("signedmemberLoginId", memberRow.get("loginId"));
-			
-			response.getWriter().append(String.format("<script>alert('%s님 로그인됨'); location.replace('../home/main');</script>", memberRow.get("name")));
-			
-			
+			session.setAttribute("loginedMember", memberRow);
+			session.setAttribute("loginedMemberId", memberRow.get("id"));
+			session.setAttribute("loginedMemberLoginId", memberRow.get("loginId"));
+
+			response.getWriter().append(String.format(
+					"<script>alert('%s님 로그인됨'); location.replace('../s/home/main');</script>", memberRow.get("name")));
+
 		} catch (SQLException e) {
 			System.out.println("에러 1 : " + e);
 		} finally {
