@@ -73,6 +73,7 @@ public class ArticleController {
 
 		Map<String, Object> articleRow = DBUtil.selectRow(conn, sql);
 
+		
 		request.setAttribute("articleRow", articleRow);
 
 		request.getRequestDispatcher("/jsp/article/detail.jsp").forward(request, response);

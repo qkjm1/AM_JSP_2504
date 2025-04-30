@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.KoreaIT.java.AM_jsp.controller.ArticleController;
 import com.KoreaIT.java.AM_jsp.controller.HomeController;
+import com.KoreaIT.java.AM_jsp.controller.MemberController;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -104,6 +105,28 @@ public class DispatcherServlet extends HttpServlet {
 					articleController.doWrite();
 					break;
 				}
+			} else if (controllerName.equals("member")) {
+				MemberController memberController = new MemberController(request, response, conn);
+
+				switch (actionMethodName) {
+				case "login":
+					memberController.showLogin();
+					break;
+				case "join":
+					memberController.showJoin();
+					break;
+				case "doLogout":
+					memberController.doLogout();
+					break;
+				case "doLogin":
+					memberController.doLogin();
+					break;
+				case "doJoin":
+					memberController.doJoin();
+					break;
+
+				}
+				
 			}
 
 		} catch (SQLException e) {
